@@ -15,6 +15,31 @@ router.get('/', authenticate, async (req: Request, res: Response) => {
   }
 });
 
+// getting a single booking by id
+router.get('/:id', authenticate, async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  try {
+    const result = await pool.query('SELECT * FROM bookings WHERE id = $1', [id]);
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: 'Booking not found'});
+      return;
+    }
+
+    res.json(result.rows[0]);
+  } catch (err : any) {
+    console.error(err)
+
+    if (err.code === '22P02') {
+      res.status(400).json({ error: 'Invalid booking ID' });
+      return;
+    }
+
+    res.status(500).json({ error: 'Failed to fetch booking' });
+  }
+});
+
 // POST a new booking
 router.post('/', async (req: Request, res: Response) => {
     const { firstname, lastname, email, phone, checkin, checkout, roomID } = req.body;
