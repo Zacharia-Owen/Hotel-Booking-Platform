@@ -46,7 +46,7 @@ function BookingPage() {
   useEffect(() => {
     axios.get(`${API_BASE_URL}/api/rooms`)
       .then(res => {
-        const found = res.data.find((r: Room) => r.id === Number(roomId));
+        const found = res.data.rooms.find((r: Room) => r.id === Number(roomId));
         setRoom(found);
       });
   }, [roomId]);
