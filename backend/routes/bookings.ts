@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { authenticate } from '../middleware/authenticate';
+import { validateBooking } from '../middleware/validatebooking';
 import pool from '../db';
 
 const router = Router();
@@ -41,38 +42,33 @@ router.get('/:id', authenticate, async (req: Request, res: Response) => {
 });
 
 // POST a new booking
-router.post('/', async (req: Request, res: Response) => {
-    const { firstname, lastname, email, phone, checkin, checkout, roomID } = req.body;
+router.post('/', validateBooking, async (req: Request, res: Response) => {
+  const { firstname, lastname, email, phone, checkin, checkout, roomID } = req.body;
 
-    if (!firstname || !lastname || !email || !phone || !checkin || !checkout || !roomID) {
-        res.status(400).json({ error: 'All fields are required' });
-        return;
+  try {
+    const result = await pool.query(
+      `INSERT INTO bookings (room_id, firstname, lastname, email, phone, checkin, checkout)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *`,
+      [roomID, firstname, lastname, email, phone, checkin, checkout]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err: any) {
+    console.error(err);
+
+    if (err.code === '23503') {
+      res.status(400).json({ error: 'Room does not exist' });
+      return;
     }
 
-    try {
-        const result = await pool.query(
-            `INSERT INTO bookings (room_id, firstname, lastname, email, phone, checkin, checkout)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
-       RETURNING *`,
-            [roomID, firstname, lastname, email, phone, checkin, checkout]
-        );
-        res.status(201).json(result.rows[0]);
-    } catch (err: any) {
-        console.error(err);
-
-        if (err.code === '23503') {
-            res.status(400).json({ error: 'Room does not exist' });
-            return;
-        }
-
-        if (err.code === '23514') {
-            res.status(400).json({ error: 'Check-out date must be after check-in date' });
-            return;
-        }
-
-        res.status(500).json({ error: 'Failed to create booking' });
+    if (err.code === '23514') {
+      res.status(400).json({ error: 'Check-out date must be after check-in date' });
+      return
     }
-});
+
+    res.status(500).json({ error: 'Failed to create booking' });
+  }
+})
 
 // DELETE a booking
 router.delete('/:id', authenticate, async (req: Request, res: Response) => {
