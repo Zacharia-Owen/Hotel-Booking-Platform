@@ -22,7 +22,7 @@ function HomePage() {
     axios.get(`${API_BASE_URL}/api/rooms`)
       .then(res => {
         console.log('Rooms received:', res.data);
-        setRooms(res.data);
+        setRooms(res.data.rooms);
         setLoading(false);
       })
       .catch(err => {
