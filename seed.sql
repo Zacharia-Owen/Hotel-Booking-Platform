@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     phone VARCHAR(20) NOT NULL,
     checkin_date DATE NOT NULL,
     checkout_date DATE NOT NULL,
-    CONSTRAINT checkout_after_checkin CHECK (checkout_date > checkin_date)
+    CONSTRAINT checkout_after_checkin CHECK (checkout > checkin)
 );
 
 -- Create indexes
