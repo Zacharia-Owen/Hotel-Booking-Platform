@@ -81,4 +81,25 @@ router.delete('/:id', authenticate, async (req: Request, res: Response) => {
   }
 });
 
+// User Cancel Booking
+router.post('/:id/cancel', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { email } = req.body;
+
+  try {
+    const result = await pool.query('SELECT * FROM bookings WHERE id = $1', [id]);
+
+    if (result.rows.length === 0 || result.rows[0].email !== email) {
+      res.status(404).json({ error: 'Booking not found'})
+      return;
+    }
+
+    await pool.query('DELETE FROM bookings WHERE id = $1', [id]);
+    res.status(200).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to cancel booking'});
+  }
+});
+
 export default router;

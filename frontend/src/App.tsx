@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage'
 import BookingPage from './pages/BookingPage'
 import ConfirmationPage from './pages/ConfirmationPage'
 import AdminPage from './pages/AdminPage'
+import CancelBookingPage from "./pages/CancelBookingPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/booking/:roomId" element={<BookingPage />} />
         <Route path="/confirmation" element={<ConfirmationPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/cancel-booking" element={<CancelBookingPage />} />
       </Routes>
     </BrowserRouter>
   )
