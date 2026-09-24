@@ -16,6 +16,24 @@ router.get('/', authenticate, async (req: Request, res: Response) => {
   }
 });
 
+// GET bookings for a specific user by email
+router.get('/lookup', async (req: Request, res: Response) => {
+  const { email } = req.query;
+
+  if (!email || typeof email !== 'string') {
+    res.status(400).json({ error: 'Email is required' });
+    return;
+  }
+
+  try {
+    const result = await pool.query('SELECT * FROM bookings WHERE email = $1', [email]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch bookings' });
+  }
+});
+
 // getting a single booking by id
 router.get('/:id', authenticate, async (req: Request, res: Response) => {
   const { id } = req.params;
