@@ -15,7 +15,7 @@ function App() {
         <Route path="/booking/:roomId" element={<BookingPage />} />
         <Route path="/confirmation" element={<ConfirmationPage />} />
         <Route path="/admin" element={<AdminPage />} />
-        <Route path="/cancel-booking" element={<CancelBookingPage />} />
+        <Route path="/cancel" element={<CancelBookingPage />} />
       </Routes>
     </BrowserRouter>
   )
