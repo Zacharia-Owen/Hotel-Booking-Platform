@@ -36,11 +36,16 @@ function MyBookingPage() {
     };
 
     const handleCancel = async (bookingId: number) => {
+        const previousBookings = bookings;
+
+        setBookings(bookings.filter(b => b.id !== bookingId));
         setCancellingId(bookingId);
+
         try {
             await axios.post(`${API_BASE_URL}/api/bookings/${bookingId}/cancel`, { email });
             setBookings(bookings.filter(b => b.id !== bookingId));
         } catch (err) {
+            setBookings(previousBookings);
             alert('Failed to cancel booking. Please try again.');
         } finally {
             setCancellingId(null);
