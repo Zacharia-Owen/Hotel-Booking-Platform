@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS bookings (
     lastname VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL,
     phone VARCHAR(20) NOT NULL,
-    checkin_date DATE NOT NULL,
-    checkout_date DATE NOT NULL,
+    checkin DATE NOT NULL,
+    checkout DATE NOT NULL,
     CONSTRAINT checkout_after_checkin CHECK (checkout > checkin)
 );
 
